@@ -16,20 +16,35 @@ CVE_item = {
         6. CVE Vuls
 }
 """
+def create_db():
+    # Connect to database
+    conn = sqlite3.connect('apache_cve.db')
+    # Create a cursor
+    c = conn.cursor()
+    # Create a Table
+    c.execute('''CREATE TABLE apache (
+            cve_name text,
+            cve_description text,
+            cve_fix_date1 text,
+            cve_fix_date2 text,
+            cve_version text,
+            cve_vuls text
+        )''')
+    # Push the previous commands
+    conn.commit()
 
+if not (os.path.isfile('./apache_cve.db')):
+        create_db()
 # Add all CVE to Database
 def main():
     # Connect to database
     conn = sqlite3.connect('apache_cve.db')
     # Create a cursor
     c = conn.cursor()
-    if not (os.path.isfile('./apache_cve.db')):
-        create_db()
     CVE_list = []
     req = requests.get(URL)
     soup = BeautifulSoup(req.text, "html.parser")
-    i = 0
-    print("The href links are :")             
+    i = 0           
     for link in soup.find_all('a'):
         if "CVE" in link.get('href'):
             i += 1
@@ -62,9 +77,7 @@ def main():
             cve_name = cve_name.split('.')
             cve_vuls = []
             for vul in json_content['affects'].get('vendor').get('vendor_data')[0].get('product').get('product_data')[0].get('version').get('version_data'): 
-                print(vul.get('version_value'))
                 cve_vuls.append(vul.get('version_value'))
-            print(cve_vuls)
 
 
             # for item in CVE_list:
@@ -78,28 +91,8 @@ def main():
                 str(cve_vuls)
                 ])
             conn.commit()
-    dialog()
     c.close()
     return 0
-
-
-
-def create_db():
-    # Connect to database
-    conn = sqlite3.connect('apache_cve.db')
-    # Create a cursor
-    c = conn.cursor()
-    # Create a Table
-    c.execute('''CREATE TABLE apache (
-            cve_name text,
-            cve_description text,
-            cve_fix_date1 text,
-            cve_fix_date2 text,
-            cve_version text,
-            cve_vuls text
-        )''')
-    # Push the previous commands
-    conn.commit()
 
 def dialog():
     vulnerable_cve = []
@@ -168,6 +161,7 @@ def dialog():
 #         else:
 #             print("Website is up to date, no vulnerabilities were found!")
 """
+
 def isEarlier(date1, date2):
     date11 = "2000-10-13".split('-')
     date1 = date1.split('-')
