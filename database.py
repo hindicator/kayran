@@ -77,10 +77,8 @@ def main():
                 cve_version[0],
                 str(cve_vuls)
                 ])
-            # sas = str(f"INSERT INTO apache VALUES ({cve_name[0]}, {cve_description}, {cve_fix_date1}, {cve_fix_date2}, {cve_version[0]}, {cve_vuls})")
-            # c.execute(sas)
             conn.commit()
-    dialog(c)
+    dialog()
     c.close()
     return 0
 
@@ -110,9 +108,9 @@ def dialog():
     print("------------------------------------------------")
     print("Enter 1 to update DATABASE\nEnter 2 to enter apache version")
     x = input()
-    if x == 1:
+    if int(x) == 1:
         main()
-    if x==2:
+    if int(x) == 2:
         print("Please enter Apache version : ")
         user_input = input()
         # Connect to database
@@ -133,8 +131,12 @@ def dialog():
         for k in vulnerable_cve:
             print(f"\n{cnt}. {k}")
             cnt+=1
+    
+    conn.close()
 
 
+# Detect website version from URL
+"""
 # def dialog():
 #     print("Enter 1 - to input website url\nEnter 2 - to input apache version")
 #     user_input = input()
@@ -165,7 +167,7 @@ def dialog():
 #             print(f"Website is vulnerable to :\n{tmp}")
 #         else:
 #             print("Website is up to date, no vulnerabilities were found!")
-
+"""
 def isEarlier(date1, date2):
     date11 = "2000-10-13".split('-')
     date1 = date1.split('-')
@@ -184,9 +186,4 @@ def isEarlier(date1, date2):
     else:
         return date1[0] < date2[0]
 
-# Close connection
-# conn.close()
-
-# create_db()
-# main()
 dialog()
